@@ -20,61 +20,10 @@ inline int CheckChar(char sign)
 	return 3;
 }
 
-void EncryptionFromFile(string InputFileName, int key)
-{
-	fstream Handler;
-	fstream	HandlerOut;
-	char sign;
-	int intSign, shift;
-
-	try
-	{
-		Handler.open(InputFileName, ios::in);
-		if (Handler.good())
-		{
-			// Checking how many chars are contained in the file
-			Handler.seekg(0, ios::end);
-			int size = Handler.tellg();
-			Handler.seekg(0);
-
-			HandlerOut.open("Encrypted.txt", ios::out);
-			if (HandlerOut.good())
-			{
-				for (int i = 0; i < size; i++)
-				{
-					Handler >> sign;
-					Handler << EncryptionChar(sign, key);
-				}
-			}
-			else
-			{
-				throw "Cannot save/open Encrypted.txt";
-			}
-								
-		}
-		else
-		{
-			string error = "Cannot open file " + InputFileName;
-			throw error;
-		}
-
-		Handler.close();
-	}
-	catch(string & error)
-	{
-		cout << "\nERROR:\t" + error + "\n";
-	}
-	catch (...)
-	{
-		cout << "\nERROR:\t Unhandled exception \n";
-	}
-}
-
-char EncryptionChar(char sign,int key)
+char EncryptionChar(char sign, int key)
 {
 	int intSign = (int)sign;
 	int shift = intSign + key;
-	cout << shift << "\n";
 
 	// DECRIPTING
 	switch (CheckChar(sign))
@@ -93,7 +42,7 @@ char EncryptionChar(char sign,int key)
 		else
 		{
 			intSign = intSign + key;
-			cout << (char)intSign;
+			return (char)intSign;
 		}
 		break;
 
@@ -133,6 +82,9 @@ char EncryptionChar(char sign,int key)
 		}
 		break;
 
+	case 3:
+		return sign;
+		break;
 
 	default:
 		throw "Incorrect input file - unexpected char in file.";
@@ -141,17 +93,83 @@ char EncryptionChar(char sign,int key)
 	}
 }
 
+void EncryptionFromFile(string InputFileName, int key)
+{
+	fstream Handler;
+	fstream	HandlerOut;
+	char sign;
+	int intSign, shift;
+
+	try
+	{
+		Handler.open(InputFileName, ios::in);
+		if (Handler.good())
+		{
+			// Checking how many chars are contained in the file
+			Handler.seekg(0, ios::end);
+			int size;
+			size = Handler.tellg();
+			Handler.seekg(0);
+
+			HandlerOut.open("Encrypted.txt", ios::out);
+			if (HandlerOut.good())
+			{
+				for (int i = 0; i < size; i++)
+				{
+					Handler >> sign;
+					HandlerOut << EncryptionChar(sign, key);
+				}
+			}
+			else
+			{
+				throw "Cannot save/open Encrypted.txt";
+			}
+								
+		}
+		else
+		{
+			string error = "Cannot open file " + InputFileName;
+			throw error;
+		}
+
+		Handler.close();
+		cout << "Encrypted.\n";
+	}
+	catch(string & error)
+	{
+		cout << "\nERROR:\t" + error + "\n";
+	}
+	catch (...)
+	{
+		cout << "\nERROR:\t Unhandled exception \n";
+	}
+}
+
+
 int main()
 {
 	cout << "----------------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n----------------------------------------------------------\n";
 	
-	char test;
 
 	//cout << DescriptionChar('0',-2);
 
-	EncryptionFromFile("test.txt", 2);
+	//cout << "Encripting ... \n";
+	//EncryptionFromFile("test.txt", 3);
 
-	
+	fstream test;
+	test.open("test.txt", ios::in);
+
+	char a;
+	test >> a;
+	cout << a;
+
+	test >> a;
+	cout << a;
+
+	test >> a;
+	cout << a;
+
+
 
 	cout << "\n\n\t";
 	system("pause");

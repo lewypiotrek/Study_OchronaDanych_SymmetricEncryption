@@ -90,12 +90,11 @@ char EncryptionChar(char sign, int key)
 	}
 }
 
-void EncryptionFromFile(string InputFileName, int key)
+void EncryptionFromFile(string InputFileName,string OutputFileName, int key)
 {
 	fstream Handler;
 	fstream	HandlerOut;
 	char sign;
-	int intSign, shift;
 
 	try
 	{
@@ -108,7 +107,7 @@ void EncryptionFromFile(string InputFileName, int key)
 			size = Handler.tellg();
 			Handler.seekg(0);
 
-			HandlerOut.open("Encrypted.txt", ios::out);
+			HandlerOut.open(OutputFileName, ios::out);
 			if (HandlerOut.good())
 			{
 				for (int i = 0; i < size; i++)
@@ -129,7 +128,7 @@ void EncryptionFromFile(string InputFileName, int key)
 		}
 
 		Handler.close();
-		cout << "Encrypted.\n";
+		cout << "Done.\n";
 	}
 	catch(string & error)
 	{
@@ -141,16 +140,54 @@ void EncryptionFromFile(string InputFileName, int key)
 	}
 }
 
+void DecriptionFromFile(string InputFileName, int key)
+{
+	key = key * (-1);
+	EncryptionFromFile(InputFileName, "Decrypted.txt", key);
+}
 
 int main()
 {
 	cout << "----------------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n----------------------------------------------------------\n";
+	cout << "\n\t****** MENU: ******\n\n\t 1. Encription \n\t 2. Decription \n\t 3. Letter counter \n";
+
+	string name;
+	int menu, key;
+	cin >> menu;
+
+	switch (menu)
+	{
+	case 1:
+		cout << "Encripting ... \n";
+		
+		cout << "\tInsert name of file: ";
+		cin >> name;
+		cout << "\n\tInsert  key:";
+		cin >> key;
+
+		EncryptionFromFile(name, "Encrypted.txt", key);
+
+		break;
+
+	case 2:
+		cout << "Decripting ... \n";
+		cout << "\tInsert name of file: ";
+		//cin >> name;
+		name = "Encrypted.txt";
+		cout << "\n\tInsert  key:";
+		cin >> key;
+
+		DecriptionFromFile(name, key);
+		
+		break;
+
+	case 3:
+
+		break;
+	}
+
 	
-
-	//cout << DescriptionChar('0',-2);
-
-	//cout << "Encripting ... \n";
-	EncryptionFromFile("test.txt", 3);
+	
 
 
 

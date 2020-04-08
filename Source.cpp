@@ -9,13 +9,10 @@ inline int CheckChar(char sign)
 {
 	//	small letter
 	if (sign >= 'a' && sign <= 'z') return 0;
-	
 	//	capital letter
 	if (sign >= 'A' && sign <= 'Z') return 1;
-
 	//	number
 	if (sign >= '0' && sign <= '9')	return 2;
-
 	//	the rest
 	return 3;
 }
@@ -116,15 +113,14 @@ void EncryptionFromFile(string InputFileName, int key)
 			{
 				for (int i = 0; i < size; i++)
 				{
-					Handler >> sign;
+					Handler.get(sign);
 					HandlerOut << EncryptionChar(sign, key);
 				}
 			}
 			else
 			{
 				throw "Cannot save/open Encrypted.txt";
-			}
-								
+			}								
 		}
 		else
 		{
@@ -154,20 +150,7 @@ int main()
 	//cout << DescriptionChar('0',-2);
 
 	//cout << "Encripting ... \n";
-	//EncryptionFromFile("test.txt", 3);
-
-	fstream test;
-	test.open("test.txt", ios::in);
-
-	char a;
-	test >> a;
-	cout << a;
-
-	test >> a;
-	cout << a;
-
-	test >> a;
-	cout << a;
+	EncryptionFromFile("test.txt", 3);
 
 
 

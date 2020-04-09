@@ -2,10 +2,12 @@
 #include<cstdlib>
 #include<string>
 #include<fstream>
+#include <algorithm>
+
 
 using namespace std;
 
-inline int CheckChar(char sign)
+inline int CheckChar(char & sign)
 {
 	//	small letter
 	if (sign >= 'a' && sign <= 'z') return 0;
@@ -17,7 +19,7 @@ inline int CheckChar(char sign)
 	return 3;
 }
 
-char EncryptionChar(char sign, int key)
+char EncryptionChar(char & sign, int key)
 {
 	int intSign = (int)sign;
 	int shift = intSign + key;
@@ -106,7 +108,7 @@ void EncryptionFromFile(string InputFileName,string OutputFileName, int key)
 			int size;
 			size = Handler.tellg();
 			Handler.seekg(0);
-
+		
 			HandlerOut.open(OutputFileName, ios::out);
 			if (HandlerOut.good())
 			{
@@ -146,6 +148,45 @@ void DecriptionFromFile(string InputFileName, int key)
 	EncryptionFromFile(InputFileName, "Decrypted.txt", key);
 }
 
+int LetterCounter(char & s, string InputFileName)
+{
+	int counter = 0;
+	fstream Handler;
+
+	Handler.open(InputFileName, ios::in);
+
+	if (Handler.good())
+	{
+		int counter = 0, size;
+		char sign;
+		
+		// Checking how many chars are in the file
+		Handler.seekg(0, ios::end);
+		size = Handler.tellg();
+		Handler.seekg(0);
+
+		// Counting
+		for (int i = 0; i < size; i++)
+		{
+			Handler.get(sign);
+			if (sign == s)
+			{
+				counter++;
+			}
+		}
+		return counter;
+	}
+	else
+	{		
+		return 0;
+	}
+}
+
+void CharsetCounterFromFile()
+{
+
+}
+
 int main()
 {
 	cout << "----------------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n----------------------------------------------------------\n";
@@ -158,6 +199,7 @@ int main()
 	switch (menu)
 	{
 	case 1:
+
 		cout << "Encripting ... \n";
 		
 		cout << "\tInsert name of file: ";
@@ -170,6 +212,7 @@ int main()
 		break;
 
 	case 2:
+
 		cout << "Decripting ... \n";
 		cout << "\tInsert name of file: ";
 		//cin >> name;
@@ -182,6 +225,9 @@ int main()
 		break;
 
 	case 3:
+		
+		char s = 'a';
+		cout << LetterCounter(s, "text.txt");
 
 		break;
 	}

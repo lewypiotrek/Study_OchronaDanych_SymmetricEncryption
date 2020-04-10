@@ -37,7 +37,7 @@ char EncryptionChar(char & sign, int key)
 	{
 		key = key % -36;
 	}
-	 
+	
 
 	// Select correct case
 	switch (CheckChar(sign))
@@ -179,7 +179,7 @@ int LetterCounter(char & s, string & InputFileName)
 	{
 		int counter = 0, size;
 		char sign;
-		
+
 		// Checking how many chars are in the file
 		Handler.seekg(0, ios::end);
 		size = Handler.tellg();
@@ -197,13 +197,14 @@ int LetterCounter(char & s, string & InputFileName)
 		return counter;
 	}
 	else
-	{		
-		cout << "Cannot open file " + InputFileName;
+	{
 		return 0;
 	}
+
+	Handler.close();
 }
 
-void CharacterCounterFromFile(string InputFileName, double * arr)
+void CharacterCounterFromFile(string InputFileName, long double * arr)
 {
 	// capital letter 0-25
 	int j = 0;
@@ -218,37 +219,38 @@ void CharacterCounterFromFile(string InputFileName, double * arr)
 	for (char i = 'a'; i <= 'z'; i++)
 	{
 		arr[j] += LetterCounter(i, InputFileName);
-		cout << "\t" << i << " -> " << arr[j] << "\n";
+		
 		j++;
 	}
-
-	// numbers 26-36
-	j = 26;
-	for (char i = '0'; i <= '9'; i++)
-	{
-		arr[j] += LetterCounter(i, InputFileName);
-		cout <<"\t" << i << " -> " << arr[j] << "\n";
-		j++;
-	}
-
+	
 	double sum = 0;
 	for (int i = 0; i < 36; i++)
 		sum += arr[i];
 
+	j = 26;
 	for (char i = '0'; i <= '9'; i++)
 	{
 		arr[j] += LetterCounter(i, InputFileName);
-		cout << "\t" << i << " -> " << (arr[j]*100)/sum << "\n";
+		cout << "\t" << i << " -> " << (arr[j] * 100) / sum << "\n";
 		j++;
 	}
+
+	j = 0;
+	for (char i = 'a'; i <= 'z'; i++)
+	{
+		cout << "\t" << i << " -> " << (arr[j] * 100) / sum << "\n";
+		j++;
+	}
+
+
 }
 
 int main()
 {
 	cout << "-----------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n-----------------------------------------------------\n";
-	cout << "\n\t****** MENU: ******\n\n\t 1. Encription \n\t 2. Decription \n\t 3. Letter counter \n\n\t*******************\nOption:";
+	cout << "\n\t****** MENU: ******\n\n\t 1. Encription \n\t 2. Decription \n\t 3. Letter counter \n\n\t*******************\nOption: ";
 
-	string name;
+	string name,name2;
 	int menu, key, size;
 	cin >> menu;
 
@@ -278,16 +280,24 @@ int main()
 
 		cout << "\n\tCharacter counter: ... \n";
 		size = 36;
-		double * CharCounter = new double[size];
-		for (int i = 0; i < size; i++)
-		{
-			CharCounter[i] = 0.0;
-		}			   
-		CharacterCounterFromFile("text.txt", CharCounter);
-		delete [] CharCounter;
+		if (size != 0) {
+			long double * CharCounter = new long double[size];
+
+			for (int i = 0; i < size; i++)
+			{
+				CharCounter[i] = 0.0;
+			}
+			cout << "\tInsert name of  file: ";
+			cin >> name;
+
+			CharacterCounterFromFile(name, CharCounter);
+			delete[]CharCounter;
+		}
 		break;	
+
 	}
 
+	
 
 	cout << "\n\n\t";
 	system("pause");

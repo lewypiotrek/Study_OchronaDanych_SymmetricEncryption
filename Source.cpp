@@ -2,7 +2,7 @@
 #include<cstdlib>
 #include<string>
 #include<fstream>
-#include <algorithm>
+
 
 
 using namespace std;
@@ -21,63 +21,83 @@ inline int CheckChar(char & sign)
 
 char EncryptionChar(char & sign, int key)
 {
-	int intSign = (int)sign;
-	int shift = intSign + key;
 
-	// DECRIPTING
+	// ENCRYPTING
+	
+	//// Preparing correct key 
+	if (key == 36 | key == 0 | key == -36)
+	{
+		return sign;
+	}
+	else if (key > 36)
+	{
+		key = key % 36;
+	}
+	else if (key < -36)
+	{
+		key = key % -36;
+	}
+	 
+
+	// Select correct case
 	switch (CheckChar(sign))
 	{
-	case 0:	// small letter
-		if (shift > 'z')
+	case 0:	
+		if (sign + key > 'z')
 		{
-			intSign = '0' + (shift - 'z') - 1;
-			return (char)intSign;
+			key = key + sign - 'z' - 1;
+			sign = '0';
+			EncryptionChar(sign, key);
 		}
-		else if (shift < 'a')
+		else if (sign + key < 'a')
 		{
-			intSign = '9' + (shift - 'a') + 1;
-			return (char)intSign;
+			key = key + sign - 'a';
+			sign = '9';
+			EncryptionChar(sign, key);
 		}
 		else
 		{
-			intSign = intSign + key;
-			return (char)intSign;
+			return sign + key;
 		}
 		break;
 
 	case 1:
-		if (shift > 'Z')
+		
+		if (sign + key > 'Z')
 		{
-			intSign = '0' + (shift - 'Z') - 1;
-			return (char)intSign;
+			key = key + sign - 'Z' - 1;
+			sign = '0';
+			EncryptionChar(sign, key);
 		}
-		else if (shift < 'A')
+		else if (sign + key < 'A')
 		{
-			intSign = '9' + (shift - 'A') + 1;
-			return (char)intSign;
+			key = key + sign - 'A' + 1;
+			sign = '9';
+			EncryptionChar(sign, key);
 		}
 		else
 		{
-			intSign = intSign + key;
-			return (char)intSign;
+			return sign + key;
 		}
 		break;
 
 	case 2:
-		if (shift > '9')
+		
+		if (sign + key > '9')
 		{
-			intSign = 'a' + (shift - '9') - 1;
-			return (char)intSign;
+			key = key + sign - '9' - 1;
+			sign = 'A';
+			EncryptionChar(sign, key);
 		}
-		else if (shift < '0')
+		else if (sign + key < '0')
 		{
-			intSign = 'z' + (shift - '0') + 1;
-			return (char)intSign;
+			key = key + sign - '0' + 1;
+			sign = 'Z';
+			EncryptionChar(sign, key);
 		}
-		else
+		else 
 		{
-			intSign = intSign + key;
-			return (char)intSign;
+			return sign + key;
 		}
 		break;
 
@@ -148,7 +168,7 @@ void DecriptionFromFile(string InputFileName, int key)
 	EncryptionFromFile(InputFileName, "Decrypted.txt", key);
 }
 
-int LetterCounter(char & s, string InputFileName)
+int LetterCounter(char & s, string & InputFileName)
 {
 	int counter = 0;
 	fstream Handler;
@@ -178,63 +198,95 @@ int LetterCounter(char & s, string InputFileName)
 	}
 	else
 	{		
+		cout << "Cannot open file " + InputFileName;
 		return 0;
 	}
 }
 
-void CharsetCounterFromFile()
+void CharacterCounterFromFile(string InputFileName, double * arr)
 {
+	// capital letter 0-25
+	int j = 0;
+	for (char i = 'A'; i <= 'Z'; i++)
+	{
+		arr[j] = LetterCounter(i, InputFileName);
+		j++;
+	}
 
+	// small letter 0-25
+	j = 0;
+	for (char i = 'a'; i <= 'z'; i++)
+	{
+		arr[j] += LetterCounter(i, InputFileName);
+		cout << "\t" << i << " -> " << arr[j] << "\n";
+		j++;
+	}
+
+	// numbers 26-36
+	j = 26;
+	for (char i = '0'; i <= '9'; i++)
+	{
+		arr[j] += LetterCounter(i, InputFileName);
+		cout <<"\t" << i << " -> " << arr[j] << "\n";
+		j++;
+	}
+
+	double sum = 0;
+	for (int i = 0; i < 36; i++)
+		sum += arr[i];
+
+	for (char i = '0'; i <= '9'; i++)
+	{
+		arr[j] += LetterCounter(i, InputFileName);
+		cout << "\t" << i << " -> " << (arr[j]*100)/sum << "\n";
+		j++;
+	}
 }
 
 int main()
 {
-	cout << "----------------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n----------------------------------------------------------\n";
-	cout << "\n\t****** MENU: ******\n\n\t 1. Encription \n\t 2. Decription \n\t 3. Letter counter \n";
+	cout << "-----------------------------------------------------\n\tPiotr Lewandowski - szyfr symetryczny\n-----------------------------------------------------\n";
+	cout << "\n\t****** MENU: ******\n\n\t 1. Encription \n\t 2. Decription \n\t 3. Letter counter \n\n\t*******************\nOption:";
 
 	string name;
-	int menu, key;
+	int menu, key, size;
 	cin >> menu;
 
 	switch (menu)
 	{
 	case 1:
 
-		cout << "Encripting ... \n";
-		
+		cout << "Encripting ... \n";	
 		cout << "\tInsert name of file: ";
 		cin >> name;
 		cout << "\n\tInsert  key:";
 		cin >> key;
-
 		EncryptionFromFile(name, "Encrypted.txt", key);
-
 		break;
 
 	case 2:
 
 		cout << "Decripting ... \n";
 		cout << "\tInsert name of file: ";
-		//cin >> name;
-		name = "Encrypted.txt";
-		cout << "\n\tInsert  key:";
+		cin >> name;
+		cout << "\n\tInsert key: ";
 		cin >> key;
-
 		DecriptionFromFile(name, key);
-		
 		break;
 
 	case 3:
-		
-		char s = 'a';
-		cout << LetterCounter(s, "text.txt");
 
-		break;
+		cout << "\n\tCharacter counter: ... \n";
+		size = 36;
+		double * CharCounter = new double[size];
+		for (int i = 0; i < size; i++)
+		{
+			CharCounter[i] = 0.0;
+		}			   
+		CharacterCounterFromFile("text.txt", CharCounter);
+		delete [] CharCounter;
+		break;	
 	}
-
-	
-	
-
 
 
 	cout << "\n\n\t";
